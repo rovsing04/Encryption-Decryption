@@ -1,78 +1,168 @@
+import encrypt_functions as e
+from os import system
 import os
+#If your on a Windows computer set this to True
+windows = False
 
-from cryptography.fernet import Fernet
+def press_continue():
+    input("Press ENTER to continue...")
+    if windows:
+        system('cls')
+    else:
+        system('clear')
 
-def generate_key():
-    key = Fernet.generate_key()
-    with open("secret.key", "wb") as key_file:
-        key_file.write(key)
+def menu():
+    print("")
+    print("#######################")
+    print("# Encrypt and Decrypt #")
+    print("#######################")
+    print("")
+    print(" 1) Encrypt Message      d1) Decrypt Message")
+    print(" 2) Encrypt Document     d2) Decrypt Document")
+    print(" 3) Encrypt Image        d3) Decrypt Image")
+    print(" 4) Encrypt Folders      d4) Decrypt Folders")
+    print("")
+    print(" 0) Create new key")
+    print("")
+    print(" q) Quit")
+    print("")
 
-def load_key():
-    return open("secret.key", "rb").read()
+def main_functions():
+    while True:
+        if windows:
+            system('cls')
+        else:
+            system('clear')
+        menu()
+        PEIN = input(" --> ")
+        print("")
+        if PEIN == "1":
+            print("What is the message?")
+            msg = input(" --> ")
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            e.encrypt_msg(msg, key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == 'q':
+            if windows:
+                system('cls')
+            else:
+                system('clear')
+            break
+        elif PEIN == 'd1':
+            print("What is the encrypted message?")
+            msg = input(" --> ")
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            e.decrypt_msg(msg, key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == '2':
+            print("Where is the Document located?")
+            msg = input(" --> ")
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            print(f'Document located at "{msg}"\nhas now been Encrypted!')
+            e.encrypt_file(msg, key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == 'd2':
+            print("Where is the Encrypted Document located?")
+            msg = input(" --> ")
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            print(f'Document located at "{msg}"\nhas now been Decrypted!')
+            e.decrypt_file(msg, key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == '3':
+            print("Where is the Image located?")
+            msg = input(" --> ")
+            file_name, file_ext = os.path.splitext(msg)
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            print(f'Image located at "{msg}"\nhas now been Encrypted!')
+            e.encrypt_image(msg, file_ext, key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == 'd3':
+            print("Where is the Encrypted Image located?")
+            msg = input(" --> ")
+            file_name, file_ext = os.path.splitext(msg)
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            print(f'Image located at "{msg}"\nhas now been Decrypted!')
+            e.decrypt_image(file_name, '.png', key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == '4':
+            print("Where is the Folder located?")
+            msg = input(" --> ")
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            e.encrypt_folder(msg, key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == 'd4':
+            print("Where is the Encrypted Folder located?")
+            msg = input(" --> ")
+            print("")
+            print("Where is your key located?")
+            key = input(" --> ")
+            print("")
+            print('##############################')
+            print("")
+            e.decrypt_folder(msg, key)
+            print("")
+            print('##############################')
+            press_continue()
+        elif PEIN == '0':
+            print("Where do you want your key to be located?")
+            msg = input(" --> ")
+            print("What should the name be on your key?")
+            name = input(" --> ")
+            print('##############################')
+            print("")
+            print(f'Your key has been generated at:\n{msg}{name}.key')
+            e.generate_key(f'{msg}{name}')
+            print("")
+            print('##############################')
+            press_continue()
 
-def encrypt_msg(message):
-    key = load_key()
-    encoded_message = message.encode()
-    f = Fernet(key)
-    enrypted_messsage = f.encrypt(encoded_message)
-
-    print(enrypted_messsage)
-
-def decrypt_msg(message):
-    key = load_key()
-    f = Fernet(key)
-    decrypted_message = f.decrypt(message)
-
-    print(decrypted_message)
-
-def encrypt_file(filedir):
-    key = load_key()
-    f = Fernet(key)
-
-    with open(filedir, 'rb') as file:
-        original = file.read()
-
-    encrypted = f.encrypt(original)
-
-    with open(filedir, 'wb') as encrypted_file:
-        encrypted_file.write(encrypted)
-
-
-def decrypt_file(filedir):
-    key = load_key()
-    f = Fernet(key)
-
-    with open(filedir, 'rb') as file:
-        original = file.read()
-
-    encrypted = f.decrypt(original)
-
-    with open(filedir, 'wb') as encrypted_file:
-        encrypted_file.write(encrypted)
-
-
-def encrypt_image(filedir, ext):
-    fin = open(filedir, 'rb')
-    # storing image data in variable "image"
-    image = fin.read()
-    fin.close()
-    # converting image into byte array to perform decryption easily on numeric data
-    image = bytearray(image)
-
-    for index, values in enumerate(image):
-        image[index] = values
-    name = filedir.replace(ext, "")
-
-    fin = open(f'{name}.txt', 'wb')
-    fin.write(image)
-    fin.close()
-    os.remove(filedir)
-
-    encrypt_file(f'{name}.txt')
-
-
-def decrypt_image(filedir, ext):
-    name = filedir.replace(ext, "")
-    decrypt_file(f'{name}.txt')
-    os.rename(f'{name}.txt', f'{name}{ext}')
-
+main_functions()
